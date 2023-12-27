@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_CLAS" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOCLASS>
+    <CLSNAME>Z_CL_EDUCATION_0001</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Education class</DESCRIPT>
+    <STATE>1</STATE>
+    <CLSCCINCL>X</CLSCCINCL>
+    <FIXPT>X</FIXPT>
+    <UNICODE>X</UNICODE>
+   </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>SUM_NUMBERS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Sum Numbers</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>SUM_NUMBERS</CMPNAME>
+     <SCONAME>EV_RESULT</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>4 Byte Signed Integer</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SUM_NUMBERS</CMPNAME>
+     <SCONAME>IV_NUM1</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>4 Byte Signed Integer</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>SUM_NUMBERS</CMPNAME>
+     <SCONAME>IV_NUM2</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>4 Byte Signed Integer</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

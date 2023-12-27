@@ -1,11 +1,12 @@
 *&---------------------------------------------------------------------*
-*& Include          ZAB_I_0008_CLS
+*& Include          ZAB_EDU_0028_CLS
 *&---------------------------------------------------------------------*
+
 CLASS cl_event_receiver DEFINITION.
   PUBLIC SECTION.
 
     METHODS handle_top_of_page                                "TOP_OF_PAGE
-      FOR EVENT top_of_page OF  cl_gui_alv_grid
+      FOR EVENT top_of_page OF cl_gui_alv_grid
       IMPORTING
         e_dyndoc_id
         table_index.
@@ -57,7 +58,8 @@ CLASS cl_event_receiver DEFINITION.
     METHODS handle_user_command                                        "USER_COMMAND
       FOR EVENT user_command OF cl_gui_alv_grid
       IMPORTING
-        e_ucomm.
+        e_ucomm
+        sender.
 
 ENDCLASS.
 
@@ -77,12 +79,7 @@ CLASS cl_event_receiver IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_data_changed.
-
-    CASE e_ucomm.
-      WHEN '&SAV'.
-*        PERFORM f_batch_input USING er_data_changed.
-        PERFORM f_send_email USING er_data_changed.
-    ENDCASE.
+    BREAK-POINT.
   ENDMETHOD.
 
   METHOD handle_onf4.
@@ -90,15 +87,7 @@ CLASS cl_event_receiver IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_toolbar.
-    DATA : ls_toolbar TYPE stb_button.
-
-    CLEAR : ls_toolbar.
-    ls_toolbar-function = '&SAV'.
-    ls_toolbar-text     = 'Kaydet'.
-    ls_toolbar-icon     = '@2L@'.
-    ls_toolbar-quickinfo = 'Kaydet'.
-    APPEND ls_toolbar TO e_object->mt_toolbar.
-
+    BREAK-POINT.
   ENDMETHOD.
 
   METHOD handle_user_command.
@@ -108,5 +97,6 @@ CLASS cl_event_receiver IMPLEMENTATION.
   METHOD handle_button_click.
     BREAK-POINT.
   ENDMETHOD.
+
 
 ENDCLASS.

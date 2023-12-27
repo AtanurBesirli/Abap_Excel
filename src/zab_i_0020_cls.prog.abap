@@ -1,5 +1,5 @@
 *&---------------------------------------------------------------------*
-*& Include          ZAB_I_0008_CLS
+*& Include          ZAB_I_0020_CLS
 *&---------------------------------------------------------------------*
 CLASS cl_event_receiver DEFINITION.
   PUBLIC SECTION.
@@ -77,12 +77,31 @@ CLASS cl_event_receiver IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_data_changed.
+    DATA : ls_modi TYPE lvc_s_modi.
+    CLEAR : gs_data.
+    LOOP AT er_data_changed->mt_good_cells INTO ls_modi.
 
-    CASE e_ucomm.
-      WHEN '&SAV'.
-*        PERFORM f_batch_input USING er_data_changed.
-        PERFORM f_send_email USING er_data_changed.
-    ENDCASE.
+      READ TABLE gt_data INTO gs_data INDEX ls_modi-row_id.
+      CASE  ls_modi-fieldname.
+        WHEN 'SATIS_FIYATI'.
+          gs_data-satis_fiyati = ls_modi-value.
+        WHEN 'SATIS_TARIHI'.
+          gs_data-satis_tarihi = ls_modi-value.
+          APPEND gs_data TO gt_data.
+          PERFORM f_refresh_alv.
+      ENDCASE.
+
+    ENDLOOP.
+    IF gs_data-satis_fiyati IS NOT INITIAL
+      AND gs_data-satis_tarihi IS NOT INITIAL.
+      UPDATE zab_t_0020 SET satis_fiyati = @gs_data-satis_fiyati,
+                            satis_tarihi = @gs_data-satis_tarihi
+                            WHERE id     = @gs_data-id.
+      COMMIT WORK.
+      PERFORM f_get_data.
+      PERFORM f_refresh_alv.
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD handle_onf4.
@@ -93,16 +112,31 @@ CLASS cl_event_receiver IMPLEMENTATION.
     DATA : ls_toolbar TYPE stb_button.
 
     CLEAR : ls_toolbar.
-    ls_toolbar-function = '&SAV'.
-    ls_toolbar-text     = 'Kaydet'.
-    ls_toolbar-icon     = '@2L@'.
-    ls_toolbar-quickinfo = 'Kaydet'.
+    ls_toolbar-function = '&SEND1'.
+    ls_toolbar-text     = 'E-Mail Gönder'.
+    ls_toolbar-icon     = '@1S@'.
+    ls_toolbar-quickinfo = 'Gönder'.
     APPEND ls_toolbar TO e_object->mt_toolbar.
 
+    CLEAR : ls_toolbar.
+    ls_toolbar-function = '&DEL'.
+    ls_toolbar-text     = 'SİL'.
+    ls_toolbar-icon     = '@11@'.
+    ls_toolbar-quickinfo = 'Sil'.
+    APPEND ls_toolbar TO e_object->mt_toolbar.
   ENDMETHOD.
 
   METHOD handle_user_command.
-    BREAK-POINT.
+
+    PERFORM f_selected_rows.
+
+    CASE e_ucomm.
+      WHEN '&SEND1'.
+        PERFORM f_send_email.
+      WHEN '&DEL'.
+        PERFORM f_del_car.
+    ENDCASE.
+
   ENDMETHOD.
 
   METHOD handle_button_click.

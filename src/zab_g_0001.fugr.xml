@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_FUGR" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <INCLUDES>
+    <SOBJ_NAME>LZAB_G_0001TOP</SOBJ_NAME>
+    <SOBJ_NAME>SAPLZAB_G_0001</SOBJ_NAME>
+   </INCLUDES>
+   <FUNCTIONS>
+    <item>
+     <FUNCNAME>ZAB_F_0001</FUNCNAME>
+     <SHORT_TEXT>Function Example</SHORT_TEXT>
+     <TABLES>
+      <RSTBL>
+       <PARAMETER>TABLE</PARAMETER>
+       <DBSTRUCT>ZAB_S_0004</DBSTRUCT>
+      </RSTBL>
+     </TABLES>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>TABLE</PARAMETER>
+       <KIND>P</KIND>
+       <STEXT>Bir satır boşluk örneği Structure</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
+   </FUNCTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>

@@ -1,11 +1,12 @@
 *&---------------------------------------------------------------------*
-*& Include          ZAB_I_0008_CLS
+*& Include          ZAB_P_0003_CLS
 *&---------------------------------------------------------------------*
+
 CLASS cl_event_receiver DEFINITION.
   PUBLIC SECTION.
 
     METHODS handle_top_of_page                                "TOP_OF_PAGE
-      FOR EVENT top_of_page OF  cl_gui_alv_grid
+      FOR EVENT top_of_page OF cl_gui_alv_grid
       IMPORTING
         e_dyndoc_id
         table_index.
@@ -57,7 +58,8 @@ CLASS cl_event_receiver DEFINITION.
     METHODS handle_user_command                                        "USER_COMMAND
       FOR EVENT user_command OF cl_gui_alv_grid
       IMPORTING
-        e_ucomm.
+        e_ucomm
+        sender.
 
 ENDCLASS.
 
@@ -69,7 +71,31 @@ CLASS cl_event_receiver IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_hotspot_click.
-    BREAK-POINT.
+    CLEAR :gs_list.
+    READ TABLE gt_list INTO gs_list INDEX e_row_id.
+    IF sy-subrc EQ 0.
+      CASE e_column_id.
+        WHEN 'VBELN_VA'.
+          SET PARAMETER ID 'AUN' FIELD gs_list-vbeln_va.
+          CALL TRANSACTION 'VA03'.
+        WHEN 'VBELN_VL'.
+          IF gs_list-vbeln_vl IS INITIAL.
+            PERFORM f_delivery.
+          ELSE.
+            SET PARAMETER ID 'VL' FIELD gs_list-vbeln_vl.
+            CALL TRANSACTION 'VL03N'.
+          ENDIF.
+        WHEN 'VBELN_VF'.
+          IF gs_list-vbeln_vf IS INITIAL.
+            PERFORM f_billing.
+          ELSE.
+            SET PARAMETER ID 'VF' FIELD gs_list-vbeln_vf.
+            CALL TRANSACTION 'VF03'.
+          ENDIF.
+
+      ENDCASE.
+
+    ENDIF.
   ENDMETHOD.
 
   METHOD handle_double_click.
@@ -77,12 +103,7 @@ CLASS cl_event_receiver IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD handle_data_changed.
-
-    CASE e_ucomm.
-      WHEN '&SAV'.
-*        PERFORM f_batch_input USING er_data_changed.
-        PERFORM f_send_email USING er_data_changed.
-    ENDCASE.
+    BREAK-POINT.
   ENDMETHOD.
 
   METHOD handle_onf4.
@@ -91,18 +112,37 @@ CLASS cl_event_receiver IMPLEMENTATION.
 
   METHOD handle_toolbar.
     DATA : ls_toolbar TYPE stb_button.
-
     CLEAR : ls_toolbar.
-    ls_toolbar-function = '&SAV'.
-    ls_toolbar-text     = 'Kaydet'.
-    ls_toolbar-icon     = '@2L@'.
-    ls_toolbar-quickinfo = 'Kaydet'.
+    ls_toolbar-function = '&Exc'.
+    ls_toolbar-text     = 'Excel'.
+    ls_toolbar-icon     = '@77@'.
     APPEND ls_toolbar TO e_object->mt_toolbar.
 
+    CLEAR : ls_toolbar.
+    ls_toolbar-function = '&Ado'.
+    ls_toolbar-text     = 'Adobe'.
+    ls_toolbar-icon     = '@0X@'.
+    APPEND ls_toolbar TO e_object->mt_toolbar.
   ENDMETHOD.
 
   METHOD handle_user_command.
-    BREAK-POINT.
+
+    PERFORM selected_rows.
+
+    LOOP AT gt_rows INTO gs_row.
+      gv_row = gs_row-index.
+    ENDLOOP.
+
+    CASE e_ucomm.
+      WHEN '&Exc'.
+        PERFORM f_excel.
+      WHEN '&Ado'.
+        IF gv_row = 0.
+          MESSAGE 'Bir Satır Seçiniz.' TYPE 'I' DISPLAY LIKE 'W'.
+        ELSE.
+          PERFORM f_adobe.
+        ENDIF.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD handle_button_click.
